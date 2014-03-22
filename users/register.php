@@ -16,6 +16,7 @@ if (isset($_POST["username"]) && isset($_POST['password']) && isset($_POST['pass
 	$user -> password = md5($_POST["password"]);
 	$user -> save();
 	$connector -> disconnect();
+	header("Location: login.php");
 } else {
 	echo "Užpildykite visus laukus";
 }

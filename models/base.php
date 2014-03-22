@@ -1,10 +1,10 @@
 <?php
-class Base{
-	public function __construct($POST=null) {
-		if ($POST != null){
-		$reflected = get_class_vars("User");
+class Base {
+	public function __construct($POST = null) {
+		if ($POST != null) {
+			$reflected = get_class_vars($this -> classname);
 			foreach ($reflected as $key => $value) {
-				if (isset($POST[$key])){
+				if (isset($POST[$key])) {
 					$this -> $key = $POST[$key];
 				}
 			}
@@ -12,80 +12,113 @@ class Base{
 	}
 
 	public function save() {
-		if (isset($this -> id)) {
-			$query = "UPDATE ";
+		$update = isset($this -> id);
+		if ($update) {
+			return $this -> update();
 		} else {
-			$reflected = get_class_vars($this->classname);
-			$query = "INSERT INTO `".$this->tablename."` (";
-			$first_iter = true;
-			foreach ($reflected as $key => $value) {
-				if ($key == 'classname' || $key == 'tablename'){
-					continue;
-				}
-				if ($first_iter){
-					$first_iter = false;
-				}
-				else{
-					$query .= ", ";
-				}
-				$query .= "" . $key;
+			return $this -> save_new();
+		}
+	}
+
+	private function save_new() {
+		$reflected = get_class_vars($this -> classname);
+		$query = "INSERT INTO `" . $this -> tablename . "` (";
+		$first_iter = true;
+		foreach ($reflected as $key => $value) {
+			if ($key == 'classname' || $key == 'tablename' || $key == 'non_string_fields' || $key == "id") {
+				continue;
 			}
-			$query .= ") VALUES (";
-			$first_iter = true;
-			foreach ($reflected as $key => $value) {
-				if ($key == 'classname' || $key == 'tablename'){
-					continue;
-				}
-				if ($first_iter){
-					$first_iter = false;
-				}
-				else{
-					$query .= ", ";
-				}
-				if (isset($this -> $key)) {
+			if ($first_iter) {
+				$first_iter = false;
+			} else {
+				$query .= ", ";
+			}
+			$query .= "" . $key;
+		}
+		$query .= ") VALUES (";
+		$first_iter = true;
+		foreach ($reflected as $key => $value) {
+			if ($key == 'classname' || $key == 'tablename' || $key == 'non_string_fields' || $key == "id") {
+				continue;
+			}
+			if ($first_iter) {
+				$first_iter = false;
+			} else {
+				$query .= ", ";
+			}
+			if (isset($this -> $key)) {
+				if (isset($this -> non_string_fields) && in_array($key, $this -> non_string_fields)) {
+					$query .= $this -> $key;
+				} else {
 					$query .= "'" . $this -> $key . "'";
 				}
 			}
-			$query .= ");";
-			return mysql_query($query);
 		}
+		$query .= ");";
+		return mysql_query($query);
 	}
-	
-	private function magic(){
-		if(func_num_args() == 2 || func_num_args() == 3){
-			$obj = func_get_arg(0);
-			$key = func_get_arg(1);
-			if(func_num_args() == 3)
-				return $obj->$key = func_get_arg(2);
-			else
-				return $obj->$key;
-		}else
-			throw new Exception('Function requires 2 or 3 arguments!');
-	}
-	
-	public function filter($filter_keys){
-		$query = "SELECT ";
-		$reflected = get_class_vars($this->classname);
+
+	private function update() {
+		$reflected = get_class_vars($this -> classname);
+		$query = "UPDATE `" . $this -> tablename . "` SET ";
 		$first_iter = true;
 		foreach ($reflected as $key => $value) {
-			if ($key == 'classname' || $key == 'tablename'){
+			if ($key == 'classname' || $key == 'tablename' || $key == 'non_string_fields') {
 				continue;
 			}
-			if (!$first_iter){
+			if (!$first_iter) {
 				$query .= ", ";
+			} else {
+				$first_iter = !$first_iter;
 			}
-			else{
+			$query .= $key . ' = ';
+			if (isset($this -> non_string_fields) && in_array($key, $this -> non_string_fields)) {
+				$query .= $this->$key;
+			} else {
+				$query .= "'" . $this->$key . "'";
+			}
+		}
+		$query .= " WHERE id = " . $this->id . ";";
+		mysql_query($query);
+		echo $query;
+	}
+
+	private function magic() {
+		if (func_num_args() == 2 || func_num_args() == 3) {
+			$obj = func_get_arg(0);
+			$key = func_get_arg(1);
+			if (func_num_args() == 3)
+				return $obj -> $key = func_get_arg(2);
+			else
+				return $obj -> $key;
+		} else
+			throw new Exception('Function requires 2 or 3 arguments!');
+	}
+
+	public function filter($filter_keys) {
+		$query = "SELECT ";
+		$reflected = get_class_vars($this -> classname);
+		$first_iter = true;
+		foreach ($reflected as $key => $value) {
+			if ($key == 'classname' || $key == 'tablename' || $key == 'non_string_fields') {
+				continue;
+			}
+			if (!$first_iter) {
+				$query .= ", ";
+			} else {
 				!$first_iter = false;
 			}
 			$query .= $key;
 		}
-		$query .= " FROM `" . $this->tablename . "` WHERE ";
+		$query .= " FROM `" . $this -> tablename . "`";
+		if (count($filter_keys) > 0) {
+			$query .= " WHERE ";
+		}
 		$first_iter = true;
 		foreach ($filter_keys as $key => $value) {
-			if (!$first_iter){
+			if (!$first_iter) {
 				$query .= " AND ";
-			}
-			else{
+			} else {
 				$first_iter = !$first_iter;
 			}
 			$query .= $key . ' = "' . $value . '" ';
@@ -93,17 +126,18 @@ class Base{
 		$query .= ";";
 		$result = mysql_query($query);
 		$filtered_values = array();
-		while ($row = mysql_fetch_array($result)){
+		while ($row = mysql_fetch_array($result)) {
 			$obj = new $this->classname();
 			foreach ($reflected as $key => $value) {
-				if ($key == 'classname' || $key == 'tablename'){
+				if ($key == 'classname' || $key == 'tablename' || $key == 'non_string_fields') {
 					continue;
 				}
-				$this->magic($obj, $key, $row[$key]);
+				$this -> magic($obj, $key, $row[$key]);
 			}
 			$filtered_values[] = $obj;
 		}
 		return $filtered_values;
 	}
+
 }
 ?>
