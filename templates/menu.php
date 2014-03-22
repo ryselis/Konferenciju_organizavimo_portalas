@@ -2,7 +2,6 @@
 	<a href="../schedule/schedule.php"> Užimtumo tvarkaraštis</a>
 	<a href="../area_for_rent/area_for_rent_list.php"> Patalpų nuoma </a>
 	<a href="../application/application_list.php"> Paraiškos </a>
-	<a href="../equipment/equipment_list.php"> Įranga </a>
 	<a> Mano info </a>
 	<div>
 		<?php echo $_SESSION["username"]; ?>

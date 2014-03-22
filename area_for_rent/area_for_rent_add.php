@@ -27,7 +27,9 @@ if (isset($_GET['id'])) {
 		?></title>
 	</head>
 	<body>
-		<?php include("../templates/menu.php"); ?>
+		<?php
+		include ("../templates/menu.php");
+ ?>
 		<form method="POST" action="./save_area_for_rent.php<?php
 		if (isset($_GET['id']))
 			echo "?id=" . $_GET['id'];
@@ -103,8 +105,28 @@ if (isset($_GET['id'])) {
 				/>
 			</div>
 			<div>Papildoma įranga</div>
-			<div id="equipment"></div>
-			<input type="button" onclick="addEquipmentField();" />
+			<div id="equipment"><?php
+			if (isset($_GET['id'])) {
+				$equipment_count = 0;
+				include_once '../models/equipment.php';
+				include_once '../helpers/mysql.php';
+				$db = new MySQLConnector();
+				$db -> connect();
+				$accessor = new Equipment();
+				$equipments = $accessor -> filter(array('area_for_rent' => $_GET['id']));
+				$db -> disconnect();
+				foreach ($equipments as $equipment) {
+					$html = '<div><div><label>Pavadinimas</label><input name="equipment_';
+					$html .= $equipment_count . '" value="' . $equipment -> title;
+					$html .= '" /></div><label>Kaina</label><input name="price_';
+					$html .= $equipment_count . '" value="' . $equipment -> price;
+					$html .= '" type="number" /><div><input type="hidden" ';
+					$html .= 'value="id_' . $equipment_count . '" /></div></div>';
+					echo $html;
+				}
+			}
+			?></div>
+			<input type="button" onclick="addEquipmentField();"  value="Pridėti naują įrangą"/>
 			<input type="submit" />
 		</form>
 	</body>
