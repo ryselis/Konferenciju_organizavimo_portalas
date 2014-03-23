@@ -16,6 +16,7 @@ if (isset($_GET['id'])) {
 <html>
 	<meta charset="UTF-8">
 	<head>
+		<script type="text/javascript" src="../js/area_for_rent_view.js"></script>
 		<title>
 		<?php
 		if ($object == null) {
@@ -28,10 +29,7 @@ if (isset($_GET['id'])) {
 	<body>
 		<?php
 		include ("../templates/menu.php");
- ?>
-		if (isset($_GET['id']))
-			echo "?id=" . $_GET['id'];
- 		?>">
+		?>
 			<div>
 				<label> Pavadinimas </label>
 				<span>
@@ -102,5 +100,25 @@ if (isset($_GET['id'])) {
 				?>
 				</span>
 			</div>
+			<div>Papildoma įranga</div>
+			<div id="equipment"><?php
+			if (isset($_GET['id'])) {
+				include_once '../models/equipment.php';
+				include_once '../helpers/mysql.php';
+				$db = new MySQLConnector();
+				$db -> connect();
+				$accessor = new Equipment();
+				$equipments = $accessor -> filter(array('area_for_rent' => $_GET['id']));
+				$db -> disconnect();
+				foreach ($equipments as $equipment) {
+					$html = '<div><div><label>Pavadinimas</label><span>';
+					$html .= $equipment -> title . '</span></div>';
+					$html .= '<div><label>Kaina</label><span>';
+					$html .= $equipment -> price . '</span></div></div>';
+					echo $html;
+				}
+			}
+			?></div>
+			<input type="button" value="Rezervuoti" onclick="reserve(<?php echo $_GET['id']; ?>);" />
 	</body>
 </html>

@@ -6,8 +6,7 @@ function addEquipmentField() {
 	if (newEquipmentInputId > 0) {
 		var lastInput = existingInputs[existingInputs.length - 1];
 		lastInput.insertAdjacentHTML('beforeEnd', html);
-	}
-	else{
+	} else {
 		equipmentDiv.innerHTML = html;
 	}
 }

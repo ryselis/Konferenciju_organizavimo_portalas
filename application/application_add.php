@@ -73,6 +73,24 @@ if (isset($_GET['id'])) {
 				?>
 				</textarea>
 			</div>
+			<div>Nuomojamos patalpos</div>
+			<?php
+			if ($object != null) {
+				include_once "../models/conference_application__area_for_rent.php";
+				include_once "../models/area_for_rent.php";
+				$db = new MySQLConnector();
+				$db->connect();
+				$accessor = new ConferenceApplicationAreaForRent();
+				$items = $accessor->filter(array("conference_application" => $object->id));
+				foreach ($items as $item){
+					$accessor = AreaForRent();
+					$areas = $accessor->filter(array("id" => $item->area_for_rent));
+					$area = $areas[0];
+					$html = "<div>" . $area->name . "<div>";
+				}
+				$db->disconnect();
+			}
+			?>
 			<input type="submit" />
 		</form>
 	</body>

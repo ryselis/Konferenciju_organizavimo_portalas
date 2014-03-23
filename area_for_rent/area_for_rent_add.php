@@ -14,9 +14,9 @@ if (isset($_GET['id'])) {
 }
 ?>
 <html>
-	<script type="text/javascript" src="../js/area_for_rent.js"></script>
 	<meta charset="UTF-8">
 	<head>
+		<script type="text/javascript" src="../js/area_for_rent.js"></script>
 		<title>
 		<?php
 		if ($object == null) {
