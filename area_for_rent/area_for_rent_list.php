@@ -16,18 +16,34 @@ session_start();
 					Data
 				</div>
 				<label>Nuo</label>
-				<input type="datetime-local" name="available_fromlte" />
+				<input type="datetime-local" name="available_fromlte" <?php
+				if (isset($_GET['available_fromlte'])) {
+					echo 'value="' . $_GET['available_fromlte'] . '"';
+				}
+				?> />
 				<label>Iki</label>
-				<input type="datetime-local" name="available_togte" />
+				<input type="datetime-local" name="available_togte" <?php
+				if (isset($_GET['available_togte'])) {
+					echo 'value="' . $_GET['available_togte'] . '"';
+				}
+				?> />
 			</div>
 			<div>
 			<div>
 			Klausytojų skaičius
 			</div>
 			<label>Nuo</label>
-			<input type="number" step="1" name="capacitygte"/>
+			<input type="number" step="1" name="capacitygte" <?php
+			if (isset($_GET['capacitygte'])) {
+				echo 'value="' . $_GET['capacitygte'] . '"';
+			}
+			?>/>
 			<label>Iki</label>
-			<input type="number" step="1" name="capacitylte"/>
+			<input type="number" step="1" name="capacitylte" <?php
+			if (isset($_GET['capacitylte'])) {
+				echo 'value="' . $_GET['capacitylte'] . '"';
+			}
+			?>/>
 			</div>
 			<div>
 			Įranga
@@ -42,10 +58,13 @@ session_start();
 			foreach ($all_equips as $eq) {
 				$html = '<input type="checkbox" name="equipment_';
 				$html .= $eq -> id;
-				$html .= '" />' . $eq -> title;
+				$html .= '" ';
+				if (isset($_GET['equipment_'.$eq->id])){
+					$html .= "checked";
+				}
+				$html .= '/>' . $eq -> title;
 				echo $html;
 			}
-			//$db -> disconnect();
 			?>
 
 			<input type="submit" />
@@ -56,43 +75,36 @@ session_start();
 				<th>Pavadinimas</th><th>Ilgis</th><th>Plotis</th><th>Plotas</th><th>Kaina, Lt/m²</th><th>Kaina, Lt</th><th>Nuomojama nuo</th><th>Nuomojama iki</th><th>Telpa žmonių</th>
 			</tr>
 			<?php
-
 			include_once "../helpers/row_builder.php";
 			include_once "../models/area_for_rent.php";
 			include_once "../models/area_for_rent__equipment.php";
-			//$db = new MySQLConnector();
-			//$db -> connect();
 			$accessor = new AreaForRent();
 			$filter_args = array();
 			$has_equip_filter = false;
 			foreach ($_GET as $key => $value) {
-				if (strpos($key, "equip") < 0) {
-					$filter_args[$key] = $value;
+				if (strpos($key, "equip") === false) {
+					if ($value) {
+						$filter_args[$key] = $value;
+					}
 				} else {
 					$has_equip_filter = true;
 				}
 			}
 			$areas = $accessor -> filter($filter_args);
-
 			foreach ($areas as $area) {
 				if ($has_equip_filter) {
-					$skip = false;
+					$skip = true;
 					foreach ($all_equips as $eq) {
 						$key = "equipment_" . $eq -> id;
 						if (isset($_GET[$key])) {
 							$accessor = new AreaForRentEquipment();
 							$items = $accessor -> filter(array("area" => $area -> id, "equipment" => $eq -> id));
-							var_dump($area, $eq, $items);
-							if (count($items) == 0) {
-								echo "count zero";
-								$skip = true;
+							if (count($items) > 0) {
+								$skip = false;
 							}
-						} else {
-							$skip = true;
-							echo "not set";
 						}
 					}
-					if ($skip){
+					if ($skip) {
 						continue;
 					}
 				}

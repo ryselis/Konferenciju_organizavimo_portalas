@@ -18,13 +18,8 @@ if (isset($_GET['id'])) {
 	<head>
 		<script type="text/javascript" src="../js/area_for_rent_view.js"></script>
 		<title>
-		<?php
-		if ($object == null) {
-			echo "Pridėti naują patalpą";
-		} else {
-			echo "Redaguoti patalpą " . $object -> title;
-		}
-		?></title>
+			Pridėti naują patalpą
+		</title>
 	</head>
 	<body>
 		<?php
@@ -105,18 +100,22 @@ if (isset($_GET['id'])) {
 			if (isset($_GET['id'])) {
 				include_once '../models/equipment.php';
 				include_once '../helpers/mysql.php';
+				include_once '../models/area_for_rent__equipment.php';
 				$db = new MySQLConnector();
 				$db -> connect();
+				$accessor = new AreaForRentEquipment();
+				$items = $accessor->filter(array('area' => $_GET['id']));
 				$accessor = new Equipment();
-				$equipments = $accessor -> filter(array('area_for_rent' => $_GET['id']));
-				$db -> disconnect();
-				foreach ($equipments as $equipment) {
+				foreach ($items as $item) {
+					$equipments = $accessor -> filter(array('id' => $item->equipment));
+					$equipment = $equipments[0];
 					$html = '<div><div><label>Pavadinimas</label><span>';
 					$html .= $equipment -> title . '</span></div>';
 					$html .= '<div><label>Kaina</label><span>';
 					$html .= $equipment -> price . '</span></div></div>';
 					echo $html;
 				}
+				$db -> disconnect();
 			}
 			?></div>
 			<input type="button" value="Rezervuoti" onclick="reserve(<?php echo $_GET['id']; ?>);" />
