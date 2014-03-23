@@ -110,23 +110,28 @@ if (isset($_GET['id'])) {
 				$equipment_count = 0;
 				include_once '../models/equipment.php';
 				include_once '../helpers/mysql.php';
+				include_once '../models/area_for_rent__equipment.php';
 				$db = new MySQLConnector();
 				$db -> connect();
+				
+				$all_items = $accessor->filter(array());
 				$accessor = new Equipment();
-				$equipments = $accessor -> filter(array('area_for_rent' => $_GET['id']));
-				$db -> disconnect();
-				foreach ($equipments as $equipment) {
-					$html = '<div><div><label>Pavadinimas</label><input name="equipment_';
-					$html .= $equipment_count . '" value="' . $equipment -> title;
-					$html .= '" /></div><label>Kaina</label><input name="price_';
-					$html .= $equipment_count . '" value="' . $equipment -> price;
-					$html .= '" type="number" /><div><input type="hidden" ';
-					$html .= 'value="id_' . $equipment_count . '" /></div></div>';
+				$all_eqs = $accessor->filter(array());
+				$accessor = new AreaForRentEquipment();
+				foreach ($all_eqs as $equipment) {
+					$html = '<div><input type="checkbox" name="equipment_';
+					$html .= $equipment->id . '"';
+					$items = $accessor -> filter(array('area' => $_GET['id'], 'equipment' => $equipment->id));
+					if (count($items) > 0){
+						$html .= 'checked';
+					}
+					$html .= '/>' . $equipment->title . ' ('.$equipment->price.' Lt)';
+					$html .= '</div>';
 					echo $html;
 				}
+				$db -> disconnect();
 			}
 			?></div>
-			<input type="button" onclick="addEquipmentField();"  value="Pridėti naują įrangą"/>
 			<input type="submit" />
 		</form>
 	</body>

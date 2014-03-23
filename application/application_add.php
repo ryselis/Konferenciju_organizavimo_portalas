@@ -79,16 +79,17 @@ if (isset($_GET['id'])) {
 				include_once "../models/conference_application__area_for_rent.php";
 				include_once "../models/area_for_rent.php";
 				$db = new MySQLConnector();
-				$db->connect();
+				$db -> connect();
 				$accessor = new ConferenceApplicationAreaForRent();
-				$items = $accessor->filter(array("conference_application" => $object->id));
-				foreach ($items as $item){
-					$accessor = AreaForRent();
-					$areas = $accessor->filter(array("id" => $item->area_for_rent));
+				$items = $accessor -> filter(array("conference_application" => $object -> id));
+				foreach ($items as $item) {
+					$accessor = new AreaForRent();
+					$areas = $accessor -> filter(array("id" => $item -> area_for_rent));
 					$area = $areas[0];
-					$html = "<div>" . $area->name . "<div>";
+					$html = "<div>" . $area -> title . "<div>";
+					echo $html;
 				}
-				$db->disconnect();
+				$db -> disconnect();
 			}
 			?>
 			<input type="submit" />
