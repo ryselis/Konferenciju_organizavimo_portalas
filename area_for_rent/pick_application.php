@@ -40,6 +40,10 @@ session_start();
 					$before_end = $app->rent_from > $other_app->rent_to;
 					$after_start = $app->rent_to < $other_app->rent_from;
 					$after_end = $app->rent_to < $other_app->rent_to;
+					var_dump($app->rent_from);
+					var_dump($app->rent_to);
+					var_dump($other_app->rent_from);
+					var_dump($other_app->rent_to);
 					if ($after_end == $after_start && $before_start == $before_end){
 						continue;	
 					}
