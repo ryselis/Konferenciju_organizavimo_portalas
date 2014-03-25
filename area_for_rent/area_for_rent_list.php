@@ -117,9 +117,9 @@ if ($_SESSION['user_group'] == UserGroup::admin()):
 					}
 				}
 				if ($_SESSION['user_group'] == UserGroup::admin()) {
-					$href = "./area_for_rent_add?id=" . $area -> id;
+					$href = "./area_for_rent_add.php?id=" . $area -> id;
 				} else {
-					$href = "./area_for_rent_view?id=" . $area -> id;
+					$href = "./area_for_rent_view.php?id=" . $area -> id;
 				}
 				$title = $area -> title;
 				$length = $area -> length;
