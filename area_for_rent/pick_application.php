@@ -26,6 +26,7 @@ session_start();
 			$area = $areas[0];
 			$accessor = new ConferenceApplicationAreaForRent();
 			$items = $accessor->filter(array("area_for_rent" => $area->id));
+			var_dump($items);
 			$app_accessor = new ConferenceApplication();
 			$my_apps = $app_accessor->filter(array("user" => $_SESSION['user_id']));
 			foreach($my_apps as $app){
