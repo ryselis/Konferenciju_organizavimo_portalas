@@ -1,0 +1,106 @@
+a {
+	font-family: sans-serif;
+	color: #CCCCCC;
+}
+
+body {
+	background-color: #222222;
+}
+
+div, h1, h2, th {
+	font-family: sans-serif;
+	color: #CCCCCC;
+}
+
+input[type="text"], input[type="password"], input[type="email"], input[type="tel"], input[type="datetime-local"], input[type="number"], textarea {
+	font-family: monospace;
+	color: #CCCCCC;
+	background-color: #222222;
+	border-color: #111111;
+	float: left;
+	width: 55%;
+}
+
+input[type="submit"], input[type="button"] {
+	font-family: monospace;
+	color: #CCCCCC;
+	background-color: #222222;
+	border-color: #111111;
+	margin-top: 15px;
+}
+
+input[type="submit"] {
+	float: right;
+	margin-right: 5%;
+}
+
+input[type="checkbox"]{
+	font-family: monospace;
+	color: #CCCCCC;
+	background-color: #222222;
+	border-color: #111111;
+	float: left;
+	margin-left: 40%;
+}
+
+label {
+	clear: both;
+	float: left;
+	width: 40%;
+	text-align: right;
+	padding-right: 10px;
+}
+
+form {
+	overflow: hidden;
+	width: 50%;
+}
+
+form > div {
+	padding: 15px 0px 15px 0px;
+}
+
+.checkbox{
+	padding: 0px;
+}
+
+.error {
+	color: #AA2222;
+}
+
+.success {
+	color: #22AA22;
+}
+
+.menu div, .menu div a {
+	display: inline;
+	padding-right: 3%;
+}
+
+.menu {
+	padding-bottom: 15px;
+}
+
+.username {
+	color: #AAAAAA;
+}
+
+.non-required {
+	font-style: oblique;
+}
+
+table, th, td{
+	border-width: 1px;
+	border-color: #888888;
+	border-collapse: collapse;
+	border-style: dashed;
+}
+
+table{
+	background-color: #232323;
+	margin-top: 15px;
+}
+
+td, th{
+	padding: 0px 10px 0px 10px;
+}

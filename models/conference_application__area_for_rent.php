@@ -4,6 +4,7 @@ class ConferenceApplicationAreaForRent extends Base {
 	public $id;
 	public $conference_application;
 	public $area_for_rent;
+	public $title;
 
 	public $tablename = "conference_application__area_for_rent";
 	public $classname = "ConferenceApplicationAreaForRent";

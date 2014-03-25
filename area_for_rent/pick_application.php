@@ -4,11 +4,16 @@ session_start();
 <html>
 	<meta charset="UTF-8" />
 	<head>
+		<link rel="stylesheet" type="text/css" href="../css/base.css" />
+		<script type="text/javascript" src="../js/pick_application.js"></script>
 		<title> Pasirinkite paraišką </title>
+	</head>
 		<body>
+			
 			<?php
 			include ("../templates/menu.php");
 			?>
+			<h1>Pasirinkite konferencijos sekciją</h1>
 			<?php
 			include_once "../models/conference_application.php";
 			include_once "../models/conference_application__area_for_rent.php";
@@ -27,28 +32,29 @@ session_start();
 				$available = true;
 				foreach($items as $item){
 					$other_apps = $app_accessor->filter(array("id" => $item->area_for_rent));
+					if (count($other_apps) == 0){
+						continue;
+					}
 					$other_app = $other_apps[0];
-					$before_start = $app->rent_from > $item->rent_from;
-					$before_end = $app->rent_from > $item->rent_to;
+					$before_start = $app->rent_from > $other_app->rent_from;
+					$before_end = $app->rent_from > $other_app->rent_to;
 					if ($before_end == $before_start){
 						continue;
 					}
-					$after_start = $app->rent_to < $item->rent_from;
-					$after_end = $app->rent_to < $item->rent_to;
+					$after_start = $app->rent_to < $other_app->rent_from;
+					$after_end = $app->rent_to < $other_app->rent_to;
 					if ($after_end == $after_start){
 						continue;	
 					}
 					$available = false;
 				}
 				if ($available){
-					$html = '<div><a href="../application/add_area_for_rent.php?area_id='.$area->id .'&app_id='.$app->id.'">' . $app->title . "</a></div>";
+					$html = '<div><a href="#" onclick="pick('.$area->id .','.$app->id.');">' . $app->title . "</a></div>";
 					echo $html;
 				}
 			}
 			$db->disconnect();
-			?>
-			<input type="button" value="Pridėti naują" />
-			
+			?>			
 		</body>
-	</head>
+	
 </html>

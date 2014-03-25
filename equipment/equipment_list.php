@@ -4,6 +4,7 @@ session_start();
 <html>
 	<meta charset="UTF-8">
 	<head>
+		<link rel="stylesheet" href="../css/base.css"/>
 		<title> Esama įranga </title>
 	</head>
 	<body>

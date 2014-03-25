@@ -82,8 +82,7 @@ class Base {
 			}
 		}
 		$query .= " WHERE id = " . $this->id . ";";
-		mysql_query($query);
-		echo $query;
+		return mysql_query($query);
 	}
 
 	private function magic() {

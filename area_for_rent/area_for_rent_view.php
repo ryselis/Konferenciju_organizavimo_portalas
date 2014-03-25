@@ -16,6 +16,7 @@ if (isset($_GET['id'])) {
 <html>
 	<meta charset="UTF-8">
 	<head>
+		<link rel="stylesheet" type="text/css" href="../css/base.css" />
 		<script type="text/javascript" src="../js/area_for_rent_view.js"></script>
 		<title>
 			Pridėti naują patalpą

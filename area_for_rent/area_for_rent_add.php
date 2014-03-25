@@ -1,5 +1,47 @@
 <?php
 session_start();
+$error = false;
+$success = false;
+if (!empty($_POST)) {
+	if ($_POST['title'] && $_POST['length'] && $_POST['width'] && $_POST['price'] && $_POST['available_from'] && $_POST['available_to'] && $_POST['available_to'] && $_POST['capacity']) {
+		include_once "../helpers/mysql.php";
+		include_once "../models/area_for_rent.php";
+		include_once "../models/equipment.php";
+		include_once "../models/area_for_rent__equipment.php";
+		if ($_POST['available_from'] > $_POST['available_to']) {
+			$error = "Nuomos pabaiga yra ankstesnė už nuomos pradžią";
+		} else {
+			$mysql = new MySQLConnector();
+			$mysql -> connect();
+			$area = new AreaForRent($_POST);
+			if (isset($_GET['id'])) {
+				$area -> id = $_GET['id'];
+			}
+			$area -> save();
+			$accessor = new Equipment();
+			$equipments = $accessor -> filter(array());
+			$accessor = new AreaForRentEquipment();
+			foreach ($equipments as $equipment) {
+				$items = $accessor -> filter(array("equipment" => $equipment -> id, "area" => $area -> id));
+				if (count($items) > 0 and !isset($_POST['equipment_' . $equipment -> id])) {
+					echo "first" . $equipment -> id;
+					$items[0] -> delete();
+				}
+				if (count($items) == 0 and isset($_POST['equipment_' . $equipment -> id])) {
+					$item = new AreaForRentEquipment();
+					$item -> area = $area -> id;
+					$item -> equipment = $equipment -> id;
+					$item -> save();
+					echo "second" . $equipment -> id;
+				}
+			}
+			$mysql -> disconnect();
+			$success = "Išsaugota";
+		}
+	} else {
+		$error = "Užpildykite visus laukus";
+	}
+}
 if (isset($_GET['id'])) {
 	include_once "../helpers/mysql.php";
 	include_once "../models/area_for_rent.php";
@@ -16,6 +58,7 @@ if (isset($_GET['id'])) {
 <html>
 	<meta charset="UTF-8">
 	<head>
+		<link rel="stylesheet" href="../css/base.css"/>
 		<script type="text/javascript" src="../js/area_for_rent.js"></script>
 		<title>
 		<?php
@@ -29,11 +72,24 @@ if (isset($_GET['id'])) {
 	<body>
 		<?php
 		include ("../templates/menu.php");
- ?>
-		<form method="POST" action="./save_area_for_rent.php<?php
-		if (isset($_GET['id']))
-			echo "?id=" . $_GET['id'];
- 		?>">
+ ?><h1>
+ <?php
+if ($object == null) {
+	echo "Pridėti naują patalpą";
+} else {
+	echo "Redaguoti patalpą " . $object -> title;
+}
+		?>
+		</h1>
+ 		<?php
+		if ($error) {
+			echo '<div class="error" >' . $error . '</div>';
+		}
+		if ($success) {
+			echo '<div class="success" >' . $success . '</div>';
+		}
+		?>
+		<form method="POST" action="">
 			<div>
 				<label> Pavadinimas </label>
 				<input type="text" name="title"
@@ -113,19 +169,19 @@ if (isset($_GET['id'])) {
 				include_once '../models/area_for_rent__equipment.php';
 				$db = new MySQLConnector();
 				$db -> connect();
-				
-				$all_items = $accessor->filter(array());
+
+				$all_items = $accessor -> filter(array());
 				$accessor = new Equipment();
-				$all_eqs = $accessor->filter(array());
+				$all_eqs = $accessor -> filter(array());
 				$accessor = new AreaForRentEquipment();
 				foreach ($all_eqs as $equipment) {
 					$html = '<div><input type="checkbox" name="equipment_';
-					$html .= $equipment->id . '"';
-					$items = $accessor -> filter(array('area' => $_GET['id'], 'equipment' => $equipment->id));
-					if (count($items) > 0){
+					$html .= $equipment -> id . '"';
+					$items = $accessor -> filter(array('area' => $_GET['id'], 'equipment' => $equipment -> id));
+					if (count($items) > 0) {
 						$html .= 'checked';
 					}
-					$html .= '/>' . $equipment->title . ' ('.$equipment->price.' Lt)';
+					$html .= '/>' . $equipment -> title . ' (' . $equipment -> price . ' Lt)';
 					$html .= '</div>';
 					echo $html;
 				}

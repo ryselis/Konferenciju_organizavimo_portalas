@@ -1,33 +1,56 @@
 <?php
-if (isset($_POST["username"]) && isset($_POST['password']) && isset($_POST['password2']) && isset($_POST['first_name']) && isset($_POST['last_name']) && isset($_POST['email_address']) && isset($_POST['phone_number'])) {
-	include_once '../helpers/mysql.php';
-	include_once '../models/user.php';
-	include_once '../models/user_group.php';
-	$connector = new MySQLConnector();
-	$user = new User($_POST);
-	$connector -> connect();
-	$accessor = new UserGroup();
-	if ($_POST['register_to'] == 'announcer') {
-		$user_group = $accessor -> filter(array("system_key" => "announcer"));
+$error = false;
+if (!empty($_POST)) {
+	if ($_POST['username'] && $_POST['password'] && $_POST['first_name'] && $_POST['last_name'] && $_POST['email_address'] && $_POST['phone_number'] && $_POST['register_to']) {
+		if ($_POST['password'] != $_POST['password2']) {
+			$error = "Slaptažodžiai nesutampa";
+		} else {
+			include_once '../helpers/mysql.php';
+			include_once '../models/user.php';
+			include_once '../models/user_group.php';
+			$connector = new MySQLConnector();
+			$user = new User($_POST);
+			$connector -> connect();
+			$accessor = new UserGroup();
+			if ($_POST['register_to'] == 'announcer') {
+				$user_group = $accessor -> filter(array("system_key" => "announcer"));
+			} else {
+				$user_group = $accessor -> filter(array("system_key" => "participant"));
+			}
+			$user -> user_group = $user_group[0] -> id;
+			$user -> password = md5($_POST["password"]);
+			if (count($user -> filter(array("username" => $_POST['username']))) > 0) {
+				$error = "Vartotojas tokiu prisijungimo vardu jau egzistuoja";
+				$connector -> disconnect();
+			} else {
+				$user -> save();
+				$connector -> disconnect();
+				header("Location: login.php");
+			}
+		}
 	} else {
-		$user_group = $accessor -> filter(array("system_key" => "participant"));
+		if (isset($_POST['submit'])) {
+			$error = "Užpildykite visus laukus!";
+		}
 	}
-	$user -> user_group = $user_group[0] -> id;
-	$user -> password = md5($_POST["password"]);
-	$user -> save();
-	$connector -> disconnect();
-	header("Location: login.php");
-} else {
-	echo "Užpildykite visus laukus";
 }
 ?>
 
 <html>
 	<meta charset="UTF-8">
 	<head>
+		<link rel="stylesheet" href="../css/base.css"/>
+		<link rel="stylesheet" href="../css/register.css"/>
 		<title> Registracija </title>
 	</head>
 	<body>
+		<div><img src="../img/logo2.png" width="137px" height="79px" />
+		</div>
+		<?php
+		if ($error) {
+			echo '<div class="error" >' . $error . '</div>';
+		}
+		?>
 		<form method="POST" action="./register.php">
 			<div>
 				<label>Vartotojo vardas</label>
@@ -59,18 +82,20 @@ if (isset($_POST["username"]) && isset($_POST['password']) && isset($_POST['pass
 			</div>
 			<div>
 				<label>Registruojuosi kaip</label>
-				<ul>
-					<li>
-						<input type="radio" name="register_to" value="announcer">
-						Konferencijos pranešėjas
-					</li>
-					<li>
-						<input type="radio" name="register_to" value="participant"/>
-						Konferencijos dalyvis
-					</li>
-				</ul>
-				<input type="submit" />
+				<div class="list-container">
+					<ul>
+						<li>
+							<input type="radio" name="register_to" value="announcer">
+							Konferencijos pranešėjas
+						</li>
+						<li>
+							<input type="radio" name="register_to" value="participant"/>
+							Konferencijos dalyvis
+						</li>
+					</ul>
+				</div>
 			</div>
+			<input type="submit" name="submit" />
 		</form>
 
 	</body>

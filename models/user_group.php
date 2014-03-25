@@ -1,4 +1,5 @@
 <?php
+require_once "base.php";
 class UserGroup extends Base{
 	public $title;
 	public $id;

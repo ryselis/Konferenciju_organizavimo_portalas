@@ -4,12 +4,15 @@ session_start();
 <html>
 	<meta charset="UTF-8">
 	<head>
+		<link rel="stylesheet" href="../css/base.css"/>
 		<title> Esamos patalpos nuomai </title>
 	</head>
 	<body>
 		<?php
 		include ("../templates/menu.php");
 		?>
+		<h1>Patalpos nuomai</h1>
+		<h2>Filtras</h2>
 		<form action="area_for_rent_list.php" method="GET">
 			<div>
 				<div>
@@ -59,20 +62,25 @@ session_start();
 				$html = '<input type="checkbox" name="equipment_';
 				$html .= $eq -> id;
 				$html .= '" ';
-				if (isset($_GET['equipment_'.$eq->id])){
+				if (isset($_GET['equipment_' . $eq -> id])) {
 					$html .= "checked";
 				}
-				$html .= '/>' . $eq -> title;
+				$html .= '/><div class="checkbox">' . $eq -> title . '</div>';
 				echo $html;
 			}
 			?>
 
 			<input type="submit" />
 		</form>
+		<?php
+include_once "../models/user_group.php";
+if ($_SESSION['user_group'] == UserGroup::admin()):
+		?>
 		<input type="button" name="add_new" value="Pridėti" onclick="document.location.href='./area_for_rent_add.php';" />
+		<?php endif; ?>
 		<table>
 			<tr>
-				<th>Pavadinimas</th><th>Ilgis</th><th>Plotis</th><th>Plotas</th><th>Kaina, Lt/m²</th><th>Kaina, Lt</th><th>Nuomojama nuo</th><th>Nuomojama iki</th><th>Telpa žmonių</th>
+				<th>Pavadinimas</th><th>Ilgis, m</th><th>Plotis, m</th><th>Plotas, m²</th><th>Kaina, Lt/m²</th><th>Kaina, Lt</th><th>Nuomojama nuo</th><th>Nuomojama iki</th><th>Telpa žmonių</th>
 			</tr>
 			<?php
 			include_once "../helpers/row_builder.php";
@@ -108,7 +116,11 @@ session_start();
 						continue;
 					}
 				}
-				$href = "./area_for_rent_add?id=" . $area -> id;
+				if ($_SESSION['user_group'] == UserGroup::admin()) {
+					$href = "./area_for_rent_add?id=" . $area -> id;
+				} else {
+					$href = "./area_for_rent_view?id=" . $area -> id;
+				}
 				$title = $area -> title;
 				$length = $area -> length;
 				$width = $area -> width;

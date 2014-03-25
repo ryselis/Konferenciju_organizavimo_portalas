@@ -6,6 +6,7 @@ $db -> connect();
 $item = new ConferenceApplicationAreaForRent();
 $item -> area_for_rent = $_GET['area_id'];
 $item -> conference_application = $_GET['app_id'];
+$item -> title = $_GET['title'];
 $item -> save();
 $db -> disconnect();
 header('Location: application_add?id=' . $_GET['app_id']);
