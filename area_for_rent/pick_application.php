@@ -32,7 +32,7 @@ session_start();
 			foreach($my_apps as $app){
 				$available = true;
 				foreach($items as $item){
-					$other_apps = $app_accessor->filter(array("id" => $item->area_for_rent));
+					$other_apps = $app_accessor->filter(array("id" => $item->conference_application));
 					var_dump($item->area_for_rent);
 					var_dump($other_apps);
 					if (count($other_apps) == 0){
