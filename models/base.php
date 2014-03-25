@@ -155,7 +155,7 @@ class Base {
 				if ($key == 'classname' || $key == 'tablename' || $key == 'non_string_fields') {
 					continue;
 				}
-				$this -> magic($obj, $key, html_entity_decode(urldecode($row[$key])));
+				$this -> magic($obj, $key, htmlentities(urldecode($row[$key])));
 			}
 			$filtered_values[] = $obj;
 		}
