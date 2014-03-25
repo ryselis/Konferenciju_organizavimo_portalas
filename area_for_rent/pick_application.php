@@ -33,8 +33,6 @@ session_start();
 				$available = true;
 				foreach($items as $item){
 					$other_apps = $app_accessor->filter(array("id" => $item->conference_application));
-					var_dump($item->area_for_rent);
-					var_dump($other_apps);
 					if (count($other_apps) == 0){
 						continue;
 					}
@@ -43,10 +41,6 @@ session_start();
 					$before_end = $app->rent_from > $other_app->rent_to;
 					$after_start = $app->rent_to < $other_app->rent_from;
 					$after_end = $app->rent_to < $other_app->rent_to;
-					var_dump($app->rent_from);
-					var_dump($app->rent_to);
-					var_dump($other_app->rent_from);
-					var_dump($other_app->rent_to);
 					if ($after_end == $after_start && $before_start == $before_end){
 						continue;	
 					}
