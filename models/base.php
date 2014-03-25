@@ -48,9 +48,9 @@ class Base {
 			}
 			if (isset($this -> $key)) {
 				if (isset($this -> non_string_fields) && in_array($key, $this -> non_string_fields)) {
-					$query .= $this -> $key;
+					$query .= urlencode($this -> $key);
 				} else {
-					$query .= "'" . $this -> $key . "'";
+					$query .= "'" . urlencode($this -> $key) . "'";
 				}
 			}
 		}
@@ -76,9 +76,9 @@ class Base {
 			}
 			$query .= $key . ' = ';
 			if (isset($this -> non_string_fields) && in_array($key, $this -> non_string_fields)) {
-				$query .= $this->$key;
+				$query .= urlencode($this->$key);
 			} else {
-				$query .= "'" . $this->$key . "'";
+				$query .= "'" . urlencode($this->$key) . "'";
 			}
 		}
 		$query .= " WHERE id = " . $this->id . ";";
