@@ -38,12 +38,9 @@ session_start();
 					$other_app = $other_apps[0];
 					$before_start = $app->rent_from > $other_app->rent_from;
 					$before_end = $app->rent_from > $other_app->rent_to;
-					if ($before_end == $before_start){
-						continue;
-					}
 					$after_start = $app->rent_to < $other_app->rent_from;
 					$after_end = $app->rent_to < $other_app->rent_to;
-					if ($after_end == $after_start){
+					if ($after_end == $after_start && $before_start == $before_end){
 						continue;	
 					}
 					$available = false;
