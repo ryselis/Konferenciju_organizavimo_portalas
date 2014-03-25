@@ -21,7 +21,7 @@
 	<?php
 	if ($_SESSION['user_group'] == UserGroup::admin()): ?>
 	<div>
-		<a href="/konferencijos/equipment/equipment_list">Papildoma įranga</a>
+		<a href="/konferencijos/equipment/equipment_list.php">Papildoma įranga</a>
 	</div>
 	<?php endif; ?>
 	<div class="username">
