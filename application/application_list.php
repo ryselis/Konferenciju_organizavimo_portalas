@@ -35,9 +35,9 @@ if ($_SESSION['user_group'] == UserGroup::announcer()):
 					if ($application -> user != $_SESSION['user_id']) {
 						continue;
 					}
-					$href = "./application_add?id=" . $application -> id;
+					$href = "./application_add.php?id=" . $application -> id;
 				} else {
-					$href = "./application_view?id=" . $application -> id;
+					$href = "./application_view.php?id=" . $application -> id;
 				}
 				$title = $application -> title;
 				$rent_from = $application -> rent_from;
